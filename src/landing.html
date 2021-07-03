@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Teams Call</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/landing.css" />
+    <link rel="shortcut icon" href="img/icon.png" />
+</head>
+<body>
+
+<div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
+  <div class="w3-display-right" style="white-space:nowrap;">
+    <span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">Teams</span>
+  </div>
+</div>
+
+<div class="w3-row w3-center w3-dark-grey w3-padding-16">
+  <div class="cta-inner section-inner cta-split">
+    <div class="cta-slogan">
+      <h5 class="m-0">Start the call<br />And share the URL with your friends.</h5>
+    </div></br>
+    <div class="form-group-desktop"><input class="form-input" type="text" id="roomName"/>
+      <button class="button button-primary pulse" onclick="{window.location.href = '/join/' + document.getElementById('roomName').value}">
+        Start
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<script src="js/landing.js"></script>
+
+</body>
+</html>

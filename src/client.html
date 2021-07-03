@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Teams Call</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/icon.png"/>
+    
+    <link rel="stylesheet" href="/css/client.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  </head>
+
+  <body onload="startRoom()">
+
+    <!-- show this before to join -->
+    <div id="loadingDiv"><h1>Loading...</h1></div>
+
+    <!-- Start bottom buttons -->
+    <div id="bottomButtons">
+      <button id="usersBtn" class="fas fa-users"></button>
+      <button id="audioBtn" class="fas fa-microphone"></button>
+      <button id="videoBtn" class="fas fa-video"></button>
+      <button id="chatRoomBtn" class="fas fa-comment-dots"></button>
+      <button id="myHandBtn" class="fas fa-hand-paper"></button>
+      <button id="moreBtn" class="fas fa-ellipsis-h"></button>
+      <button id="leaveRoomBtn" class="fas fa-phone-slash"></button>
+    </div>
+    <!-- End bottom buttons -->
+
+    <section id="users">
+      <header>
+        <button id="usersCloseBtn" class="fas fa-times"></button>
+      </header>
+      <main>
+        <br />
+        <button id="shareRoomBtn" class="fas fa-user-plus">Invite</button>
+        <br />
+        <div>
+          <label>Participants:&nbsp;</label><br />
+          <main id="participantsBox" class="participants-box">
+            <div id="participantsList"></div>
+          </main>
+        </div>
+      </main>
+    </section>
+
+    <!-- Start chat room -->
+    <section id="msgerDraggable" class="msger-draggable">
+      <section id="msger" class="msger">
+        <header id="msgerHeader" class="msger-header">
+          <div class="msger-header-title">
+            <i class="fas fa-comment-alt"></i> Chat
+          </div>
+          <div class="msger-header-options">
+            <button id="msgerCPBtn" class="fas fa-users"></button>
+            <button id="msgerClose" class="fas fa-times"></button>
+          </div>
+        </header>
+
+        <!-- public messages example -->
+        <main id="msgerChat" class="msger-chat">
+        </main>
+
+        <div class="msger-inputarea">
+          <input
+            id="msgerInput"
+            class="msger-input"
+            type="text"
+            placeholder="Enter your message..."
+          />
+          <button id="msgerSendBtn" class="fas fa-paper-plane"></button>
+        </div>
+      </section>
+
+      <!-- Start private msg -->
+      <section id="msgerCP">
+        <section id="msgerCPSec" class="msger">
+          <header id="msgerCPHeader" class="msger-private-header">
+            <div class="msger-header-title">
+              <i class="fas fa-comment-alt"></i> Send Private messages
+            </div>
+            <div class="msger-header-options">
+              <button id="msgerCPCloseBtn" class="fas fa-times"></button>
+            </div>
+          </header>
+          <main id="msgerCPChat" class="msger-chat">
+            <div id="msgerCPList"></div>
+          </main>
+        </section>
+      </section>
+      <!-- End private msg -->
+    </section>
+    <!-- End chat room -->
+
+
+    <section id="more">
+      <header>
+        <button id="moreCloseBtn" class="fas fa-times"></button>
+      </header>
+      <main>
+        <br />
+        <button id="screenShareBtn" class="fas fa-desktop"></button> 
+        <button id="recordStreamBtn" class="fas fa-record-vinyl"></button> 
+        <button id="fileShareBtn" class="fas fa-file"></button> 
+        <button id="muteEveryoneBtn" class="fas fa-microphone"></button> 
+        <button id="hideEveryoneBtn" class="fas fa-video"></button> 
+      
+      </main>
+    </section>
+
+    <!-- Js scripts -->
+    <script src="https://kit.fontawesome.com/d2f1016e6f.js" crossorigin="anonymous"></script>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="https://cdn.rawgit.com/muaz-khan/DetectRTC/master/DetectRTC.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.16"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/client.js"></script>
+    <!-- end of Js scripts -->
+
+		</body>
+</html>
