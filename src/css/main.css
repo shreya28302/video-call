@@ -15,7 +15,6 @@ body, html {
 }
 
 .bgimg-1 {
-  /*background-image: url('https://www.metaswitch.com/hs-fs/hubfs/assets/images/Microsoft-Teams-Logo.png?width=832&name=Microsoft-Teams-Logo.png');*/
   background-image: url('https://www.howtogeek.com/thumbcache/2/200/23778f53defb0f849f8b821392b26642/wp-content/uploads/2020/05/stock-lede-microsoft-teams.jpg');
   min-height: 100%;
 }

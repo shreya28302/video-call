@@ -29,28 +29,8 @@ let channels = {};
 let sockets = {}; 
 let peers = {}; 
 
-const mongoose = require("mongoose");
-const User = require('./models/user')
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const JWT_SECRET = process.env.JWT_SECRET;
-
 app.use(express.static(path.join(__dirname, "src"))); // to use static files
 app.use(express.json()); // to parse the data from request body to json
-
-// connect to mongoDB
-mongoose.connect(
-  process.env.MDB_CONNECT,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true
-  },
-  (err) => {
-    if (err) return console.error(err);
-    console.log("Connected to MongoDB");
-  }
-);
 
 // Remove trailing slashes in url handle bad requests
 app.use((err, req, res, next) => {
@@ -66,8 +46,7 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.get(["/"], (req, res) => { res.sendFile(path.join(__dirname, "src/landing.html")) });
-app.get(["/start"], (req, res) => { res.sendFile(path.join(__dirname, "src/start.html")) });
+app.get(["/"], (req, res) => { res.sendFile(path.join(__dirname, "src/main.html")) });
 app.get("/join/", (req, res) => { res.redirect("/"); });
 app.get("/join/*", (req, res) => {
   if (Object.keys(req.query).length > 0) {
@@ -101,45 +80,6 @@ async function ngrokStart() {
 server.listen(PORT, null, () => { 
   console.log(`Running at ${PORT}`); 
   if (ngrokEnabled == "true") ngrokStart();
-});
-
-
-app.post('/login', async (req, res) => {
-  const { username, password } = req.body
-  const user = await User.findOne({ username }).lean()
-
-  if (!user) return res.json({ status: 'error', error: 'Invalid username/password' })
-
-  if (await bcrypt.compare(password, user.password)) {
-    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET)
-    return res.json({ status: 'ok', data: token })
-  }
-  res.json({ status: 'error', error: 'Invalid username/password' })
-})
-
-app.post('/register', async (req, res) => {
-  const { username, password: plainTextPassword } = req.body
-
-  if (!username || typeof username !== 'string') return res.json({ status: 'error', error: 'Invalid username' })
-  if (!plainTextPassword || typeof plainTextPassword !== 'string') return res.json({ status: 'error', error: 'Invalid password' })
-  if (plainTextPassword.length < 5) return res.json({ status: 'error', error: 'Password too small. Should be atleast 6 characters' })
-  
-  const password = await bcrypt.hash(plainTextPassword, 10)
-
-  try {
-    const response = await User.create({ username, password })
-    console.log('User created successfully: ', response)
-  } catch (error) {
-    if (error.code === 11000) return res.json({ status: 'error', error: 'Username already in use' })
-    throw error
-  }
-
-  res.json({ status: 'ok' })
-})
-
-app.get('/logout', function (req, res) {
-    req.logout();
-    res.redirect('/start');
 });
 
 // users get connected to the server
