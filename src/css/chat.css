@@ -1,0 +1,403 @@
+:root {
+  --video-object-fit: cover;
+}
+
+* { outline: none; }
+
+@-webkit-keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@-moz-keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+body {
+  font-family: sans-serif;
+  background: #16171b; 
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  opacity: 0; 
+  -webkit-animation: fadeIn ease-in 1;
+  -moz-animation: fadeIn ease-in 1;
+  animation: fadeIn ease-in 1;
+  -webkit-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-duration: 0.3s;
+  -moz-animation-duration: 0.3s;
+  animation-duration: 0.3s;
+  overflow: hidden;
+}
+
+/*--------------------------------------------------------------
+# Loading...
+--------------------------------------------------------------*/
+
+#loadingDiv {
+  position: relative;
+  color: white;
+  top: 40%;
+  left: 60%;
+  transform: translate(-18%, -25%);
+}
+#loadingDiv h1 {
+  font-size: 70px;
+}
+
+#users {
+  display: block;
+  z-index: 15;
+  width: 25%;
+  position: absolute;
+  top: 0%;
+  right: 0%;
+  background-color: rgba(48, 48, 48);
+  border-radius: 5px;
+  margin: auto;
+  padding: 10px;
+  overflow: hidden;
+}
+
+#users label {
+  width: 7em;
+  padding-top: 20px;
+  padding-left: 5px;
+  font-weight: bold;
+  font-size: 1.5em;
+  display: flex;
+  color: white;
+}
+
+/*--------------------------------------------------------------
+# Chat room aka msger
+--------------------------------------------------------------*/
+
+.msger-draggable {
+  z-index: 10;
+  display: block;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  height: 100%;
+  width: 73%;
+  background: #16171b;
+  overflow: hidden;
+  border-radius: 5px;
+}
+
+.msger {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: space-between;
+  top: 0%;
+  left: 0%;
+  height: 100%;
+  width: 100%;
+  background: #16171b;
+}
+
+/*--------------------------------------------------------------
+# Chat room header
+--------------------------------------------------------------*/
+
+.msger-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: rgb(0, 0, 0);
+  color: #666;
+}
+
+.msger-individual-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: rgb(0, 0, 0);
+  color: #666;
+}
+
+.msger-header-options button {
+  border: none;
+  font-size: 1.2rem;
+  transition: all 0.3s ease-in-out;
+  background: rgb(0, 0, 0);
+  color: #fff;
+  border-radius: 5px;
+  transition: background 0.23s;
+}
+.msger-header-options button:hover {
+  color: #9477CB;
+  transform: scale(1.1);
+  transition: all 0.3s ease-in-out;
+}
+
+/*--------------------------------------------------------------
+# Chat room output area
+--------------------------------------------------------------*/
+
+.msger-chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background: #16171b;
+}
+.msger-chat::-webkit-scrollbar {
+  width: 5px;
+}
+.msger-chat::-webkit-scrollbar-track {
+  background: transparent;
+}
+.msger-chat::-webkit-scrollbar-thumb {
+  background: black;
+}
+
+.msg {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 10px;
+}
+
+.msg:last-of-type {
+  margin: 0;
+}
+
+/* left side */
+
+.left-msg .msg-bubble {
+  background: #222328;
+  border-bottom-left-radius: 0;
+  color: #fff;
+}
+
+.left-msg .individual-msg-bubble {
+  background: #9477CB;
+  border-bottom-left-radius: 0;
+  color: #fff;
+}
+
+/* right side */
+
+.right-msg {
+  flex-direction: row-reverse;
+}
+.right-msg .msg-bubble {
+  background: #0a0b0c;
+  border-bottom-right-radius: 0;
+  color: #fff;
+}
+.right-msg .individual-msg-bubble {
+  background: #9477CB;
+  border-bottom-right-radius: 0;
+  color: #fff;
+}
+.right-msg .msg-img {
+  margin: 0 0 0 10px;
+}
+
+.msg-img {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.individual-msg-bubble,
+.msg-bubble {
+  max-width: 200px;
+  padding-top: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 15px;
+}
+
+.msg-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.msg-info-name {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.msg-info-time {
+  padding-top: 20px;
+  font-size: 0.65em;
+}
+
+.msg-text {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+#chat-msg-a {
+  color: white;
+}
+
+/*--------------------------------------------------------------
+# Chat room input area
+--------------------------------------------------------------*/
+
+.msger-inputarea {
+  display: flex;
+  padding: 10px;
+  background: #16171b;
+}
+
+.msger-inputarea * {
+  padding: 10px;
+  border: none;
+  border-radius: 3px;
+  font-size: 1em;
+  color: white;
+}
+
+.msger-input {
+  flex: 1;
+  background: rgb(0, 0, 0);
+}
+
+#msgerSendBtn {
+  background: rgb(0, 0, 0);
+  color: #fff;
+  transition: background 0.23s;
+}
+
+#msgerSendBtn:hover {
+  color: #9477CB;
+  transform: scale(1.1);
+  transition: all 0.3s ease-in-out;
+}
+
+/*--------------------------------------------------------------
+# Chat Connected Peers 
+--------------------------------------------------------------*/
+
+#msgerI {
+  z-index: 11;
+  display: none;
+  cursor: default;
+  top: 0%;
+  left: 0%;
+  height: 100%;
+  width: 100%;
+  background: black;
+  position: absolute;
+  overflow: hidden;
+}
+
+#msgerIList button {
+  border: none;
+  font-size: 1.2rem;
+  transition: all 0.3s ease-in-out;
+  background: rgb(0, 0, 0);
+  color: #fff;
+  border-radius: 5px;
+  transition: background 0.23s;
+}
+
+#msgerIList button:hover {
+  color: #9477CB;
+  transform: scale(1.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.participants-box {
+  flex: 1;
+  overflow-y: auto;
+  padding: 3px;
+  background: #16171b;
+}
+.participants-box::-webkit-scrollbar {
+  width: 5px;
+}
+.participants-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+.participants-box::-webkit-scrollbar-thumb {
+  background: black;
+}
+
+.participants-area {
+  display: flex;
+  background: rgba(48, 48, 48);
+}
+
+.participants-area:hover {
+  background: #16171b;
+  cursor: pointer;
+}
+
+.participants-area * {
+  border: none;
+  border-radius: 1px;
+  margin-left: 20px;
+  font-size: 1em;
+  color: white;
+}
+
+#shareRoomBtn,
+#leaveRoomBtn {
+  border: none;
+  border-radius: 5px;
+  width: 40px;
+  background: rgba(48, 48, 48);
+  color: white;
+  font-size: 1.5rem;
+  padding: 4px;
+  transition: all 0.3s ease-in-out;
+}
+
+#shareRoomBtn:hover {
+  color: #9477CB;
+  transform: scale(1.1);
+}
+
+#leaveRoomBtn:hover {
+  color: red;
+  transform: scale(1.1);
+}
+
+/*--------------------------------------------------------------
+# Swal2
+--------------------------------------------------------------*/
+
+.swal2-validation-message,
+.swal2-title,
+.swal2-content,
+.swal2-input {
+  text-align: center;
+  color: white !important;
+  background-color: transparent !important;
+}
+.swal2-file {
+  color: white !important;
+  background-color: transparent !important;
+}
+.swal2-html-container {
+  color: rgb(165, 165, 165) !important;
+  background-color: transparent !important;
+}
+.swal2-select {
+  background-color: black !important;
+  color: white !important;
+  border-radius: 6px !important;
+}
+

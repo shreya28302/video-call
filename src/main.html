@@ -5,34 +5,63 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Teams Call</title>
+    <title>Teams</title>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-firestore.js"></script>
     <link rel="stylesheet" href="css/main.css" />
     <link rel="shortcut icon" href="img/icon.png" />
 </head>
 <body>
 
-<div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
-  <div class="w3-display-right" style="white-space:nowrap;">
-    <span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">Teams</span>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav" id="username"> 
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a type="button" href="" id="logout_button"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+      </ul>
+    </div>
   </div>
-</div>
+</nav>
 
 <div class="w3-row w3-center w3-dark-grey w3-padding-16">
   <div class="cta-inner section-inner cta-split">
     <div class="cta-slogan">
-      <h5 class="m-0">Start the call<br />And share the URL with your friends.</h5>
+      <h5 style="font-size:1.5em" class="m-0">New Room<br />Start and share the link with your friends.</h5>
     </div></br>
     <div class="form-group-desktop"><input class="form-input" type="text" id="roomName"/>
       <button class="button button-primary pulse" onclick="{window.location.href = '/join/' + document.getElementById('roomName').value}">
-        Start
+        Call
+      </button>
+    </div></br>
+    <div class="form-group-desktop"><input class="form-input" type="text" id="chatroomName"/>
+      <button class="button button-primary pulse" onclick="{window.location.href = '/chat/' + document.getElementById('chatroomName').value}">
+        Chat
       </button>
     </div>
   </div>
 </div>
 
+<!--<div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
+  <div class="w3-display-right" style="white-space:nowrap;">
+    <span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">Teams</span>
+  </div>
+</div>-->
+
+<div class="container bootstrap snippets bootdey"> 
+  <p style=""> Previous Rooms </p>
+  <div id="meetings" class="row">
+  </div>
+</div>
 
 <script src="js/main.js"></script>
 

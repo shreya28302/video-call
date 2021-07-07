@@ -46,14 +46,21 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.get(["/"], (req, res) => { res.sendFile(path.join(__dirname, "src/main.html")) });
-app.get("/join/", (req, res) => { res.redirect("/"); });
+app.get(["/"], (req, res) => { res.sendFile(path.join(__dirname, "src/start.html")) });
+app.get(["/main"], (req, res) => { res.sendFile(path.join(__dirname, "src/main.html")) });
+app.get("/join/", (req, res) => { res.redirect("/main"); });
 app.get("/join/*", (req, res) => {
   if (Object.keys(req.query).length > 0) {
     console.log("redirect:" + req.url + " to " + url.parse(req.url).pathname);
     res.redirect(url.parse(req.url).pathname);
-  } else res.sendFile(path.join(__dirname, "src/client.html"));
-  
+  } else res.sendFile(path.join(__dirname, "src/call.html")); 
+});
+app.get("/chat/", (req, res) => { res.redirect("/main"); });
+app.get("/chat/*", (req, res) => {
+  if (Object.keys(req.query).length > 0) {
+    console.log("redirect:" + req.url + " to " + url.parse(req.url).pathname);
+    res.redirect(url.parse(req.url).pathname);
+  } else res.sendFile(path.join(__dirname, "src/chat.html")); 
 });
 
 // stun-turn server
@@ -61,7 +68,7 @@ let iceServers = [{ urls: "stun:stun.l.google.com:19302" }];
 if (turnEnabled == "true") iceServers.push({ urls: turnUrls, username: turnUsername, credential: turnCredential, });
 
 // Expose server to external with https tunnel using ngrok
-async function ngrokStart() {
+async function startngrok() {
   try {
     await ngrok.authtoken(ngrokAuthToken);
     await ngrok.connect(PORT);
@@ -72,14 +79,14 @@ async function ngrokStart() {
     console.log(tunnelHttps);
   } 
   catch (err) {
-    console.error("Error ngrokStart", err);
+    console.error(err);
   }
 }
 
 // Start Local Server 
 server.listen(PORT, null, () => { 
   console.log(`Running at ${PORT}`); 
-  if (ngrokEnabled == "true") ngrokStart();
+  if (ngrokEnabled == "true") startngrok();
 });
 
 // users get connected to the server
