@@ -21,6 +21,7 @@ let background = "rgba(48, 48, 48)";
 let serverPort = 4000; // must be same of server PORT
 let server = getServerUrl();
 let roomId = getRoomId();
+let roomName;
 
 let connection;
 let myName;
@@ -48,15 +49,24 @@ let rightChatImg;
 
 let participantsList;
 let shareRoomBtn;
+let joinCallBtn;
 let leaveRoomBtn;
 
-auth.onAuthStateChanged((user) => {
+auth.onAuthStateChanged(async (user) => {
 
   if (user) {
-    firestore.collection('users').doc(`${user.uid}`).get()
+    await firestore.collection('users').doc(`${user.uid}`).get()
     .then((snapshot) => {
       console.log(snapshot.data().username);
       myName = snapshot.data().username;
+    });
+    await firestore.collection('meetings').doc(`${roomId}`).get()
+    .then(function(doc) {
+      roomName = doc.data().roomName;
+    })
+    .catch(function(err) {
+      alert("couldn't join, room does not exist");
+      window.location.href='/main';
     });
   } 
   else {
@@ -80,12 +90,14 @@ function getHtmlElementsById() {
   msgerIList = getId("msgerIList");
   participantsList = getId("participantsList");
   shareRoomBtn = getId("shareRoomBtn");
+  joinCallBtn = getId("joinCallBtn");
   leaveRoomBtn = getId("leaveRoomBtn");
 }
 
 function setButtonsTitle() {
   tippy(msgerIBtn, { content: "Individual messages", });
   tippy(shareRoomBtn, { content: "Invite people to join", placement: "right-start", });
+  tippy(joinCallBtn, { content: "Join call", placement: "right-start", });
   tippy(leaveRoomBtn, { content: "Leave chat", placement: "right-start", });
 }
 
@@ -141,6 +153,7 @@ function startChat() {
     setChatRoomBtn();
     setLeaveRoomBtn();
     setShareRoomBtn();
+    setJoinCallBtn();
     whoAreYou();;
   });
 
@@ -303,10 +316,11 @@ function whoAreYou() {
   Swal.fire({ allowEscapeKey: false, allowEnterKey: false, allowOutsideClick: false, 
     background: background, position: "top", title: `Joining the Chat`, 
     timer: 5000, 
-    didOpen: () => { Swal.showLoading(); timerInterval = setInterval(() => {}, 100); },
+    didOpen: () => { Swal.showLoading(); timerInterval = setInterval(() => {
+      setPeerChatImgName("right", myName);
+    }, 100); },
     willClose: () => { clearInterval(timerInterval); }, 
   }).then(() => { 
-    setPeerChatImgName("right", myName);
     joinToChannel();
     welcomeUser(); 
     let ParticipantDiv = getId("participantDiv");
@@ -321,6 +335,7 @@ function whoAreYou() {
       participantsList.insertAdjacentHTML("beforeend", participantDiv);
       participantsList.scrollTop += 500;
     }
+    document.getElementById("meetingName").innerHTML = `${roomName}`;
   });
 
 }
@@ -328,20 +343,21 @@ function whoAreYou() {
 // join to chennel and send some peer info
 function joinToChannel() {
   console.log("join to channel", roomId);
-  const meetings = firestore.collection(`${myName}`).doc(`${roomId}`);
-  const snapshot = meetings.get();
+
+  const mymeetings = firestore.collection(`${myName}`).doc(`${roomId}`);
+  const snapshot = mymeetings.get();
   let timestamp = Date.now();
   let date = new Date().toString().slice(0,-34);
   if (!snapshot.exists) {
     try {
-      meetings.set({ roomId, timestamp, date });
+      mymeetings.set({ roomId, timestamp, date, roomName });
     } catch (err) {
       console.log(err);
     }
   }
   else{
     try {
-      meetings.update({'timestamp':timestamp, 'date':date });
+      mymeetings.update({'timestamp':timestamp, 'date':date });
     } catch (err) {
       console.log(err);
     }
@@ -455,6 +471,11 @@ function setShareRoomBtn() {
   });
 }
 
+function setJoinCallBtn() {
+  joinCallBtn.addEventListener("click", async (e) => {
+    window.location.href='/join/' + roomId;
+  });
+}
 
 // Copy Room URL to clipboard
 function copyRoomURL() {

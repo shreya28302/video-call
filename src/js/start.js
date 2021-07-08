@@ -52,6 +52,8 @@ login_button.addEventListener("click", async(e) => {
         window.location.href = '/main';
     })
     .catch((error) => {
+        document.getElementById('login_email').value = "";
+        document.getElementById('login_password').value = "";
         alert(error);
     });
 
@@ -84,6 +86,9 @@ signup_button.addEventListener("click", async(e) => {
             alert('Success! Login Yourself');
         })
         .catch((error) => {
+            document.getElementById('signup_email').value = "";
+            document.getElementById('signup_username').value = "";
+            document.getElementById('signup_password').value = "";
             alert(error);
         });
     }

@@ -19,23 +19,8 @@ function getRandomWord(length) {
 }
 
 document.getElementById("roomName").value = "";
-document.getElementById("chatroomName").value = "";
-
-let i = 0;
+let background = "rgba(48, 48, 48)";
 let txt = getRandomNumber(4) + getRandomWord(8) + getRandomNumber(4);
-let speed = 100;
-
-typeWriter();
-
-function typeWriter() {
-  if (i < txt.length) {
-    document.getElementById("roomName").value += txt.charAt(i);
-    document.getElementById("chatroomName").value += txt.charAt(i);
-    i++;
-    setTimeout(typeWriter, speed);
-  }
-}
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyBU4FO5YbU0wCi4DR2Dqbj7kCGeOMKNpyI",
@@ -51,10 +36,11 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 
+const createBtn = document.getElementById("createBtn");
 const logout_button = document.getElementById("logout_button");
 const name = document.getElementById("username");
 let myName;
-let meetings = document.getElementById("meetings");
+let meetingsDiv = document.getElementById("meetingsDiv");
 let serverPort = 4000; // must be same of server PORT
 let server = getServerUrl();
 
@@ -97,6 +83,51 @@ logout_button.addEventListener("click", async (e) => {
   
 })
 
+createBtn.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  if(document.getElementById("roomName").value === ""){
+    alert('Please enter a valid room name');
+    return;
+  }
+
+  let timerInterval;
+  Swal.fire({ allowEscapeKey: false, allowEnterKey: false, allowOutsideClick: false, 
+    background: background, position: "top", title: `Creating room`, 
+    timer: 2000, 
+    didOpen: () => { Swal.showLoading(); timerInterval = setInterval(() => {
+      let roomName = document.getElementById("roomName").value;
+      let roomId = txt;
+      const mymeetings = firestore.collection(`${myName}`).doc(`${roomId}`);
+      const snapshot = mymeetings.get();
+      let timestamp = Date.now();
+      let date = new Date().toString().slice(0,-34);
+      if (!snapshot.exists) {
+        try {
+          mymeetings.set({ roomId, timestamp, date, roomName });
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      const meetings = firestore.collection('meetings').doc(`${roomId}`);
+      const shot = meetings.get();
+      if (!shot.exists) {
+        try {
+          meetings.set({ roomId, roomName });
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+    }, 100); },
+    willClose: () => { clearInterval(timerInterval); }, 
+  }).then(() => {
+      window.location.href = '/main';     
+  });
+  
+})
+
 function loadMeetings() {
   firestore.collection(`${myName}`).orderBy('timestamp', 'desc').get()
   .then(function(snapshot) {
@@ -118,7 +149,8 @@ function loadMeetings() {
                       </a>
                   </div>
                   <div class="info">
-                      <h4>${doc.data().roomId}</h4>
+                      <h4>${doc.data().roomName}</h4>
+                      <i style="font-size:0.65em">${doc.data().roomId}</i>
                       <p class="text-muted">${doc.data().date}</p>
                   </div>
               </div>
@@ -128,8 +160,8 @@ function loadMeetings() {
         </div>
       </div>
       `;
-      meetings.insertAdjacentHTML("beforeend", meetdiv);
-      meetings.scrollTop += 500;
+      meetingsDiv.insertAdjacentHTML("beforeend", meetdiv);
+      meetingsDiv.scrollTop += 500;
     });
   });
 }

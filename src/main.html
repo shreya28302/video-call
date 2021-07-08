@@ -36,33 +36,23 @@
 <div class="w3-row w3-center w3-dark-grey w3-padding-16">
   <div class="cta-inner section-inner cta-split">
     <div class="cta-slogan">
-      <h5 style="font-size:1.5em" class="m-0">New Room<br />Start and share the link with your friends.</h5>
+      <h5 style="font-size:1.5em" class="m-0">Create a Room<br />And share the link with your friends</h5>
     </div></br>
-    <div class="form-group-desktop"><input class="form-input" type="text" id="roomName"/>
-      <button class="button button-primary pulse" onclick="{window.location.href = '/join/' + document.getElementById('roomName').value}">
-        Call
+    <div class="form-group-desktop"><input class="form-input" type="text" id="roomName" placeholder="Enter Room Name" />
+      <button class="button button-primary pulse" id="createBtn">
+        Create
       </button>
     </div></br>
-    <div class="form-group-desktop"><input class="form-input" type="text" id="chatroomName"/>
-      <button class="button button-primary pulse" onclick="{window.location.href = '/chat/' + document.getElementById('chatroomName').value}">
-        Chat
-      </button>
-    </div>
   </div>
 </div>
-
-<!--<div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
-  <div class="w3-display-right" style="white-space:nowrap;">
-    <span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">Teams</span>
-  </div>
-</div>-->
 
 <div class="container bootstrap snippets bootdey"> 
-  <p style="color: black; text-align: center; font-weight: bold; font-size: 2em;"> Previous Rooms </p>
-  <div id="meetings" class="row">
+  <p style="color: black; text-align: center; font-weight: bold; font-size: 2em;"> Your Rooms </p>
+  <div id="meetingsDiv" class="row">
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.16"></script>
 <script src="js/main.js"></script>
 
 </body>

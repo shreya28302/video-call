@@ -22,6 +22,7 @@ let background = "rgba(48, 48, 48)";
 let serverPort = 4000; // must be same of server PORT
 let server = getServerUrl();
 let roomId = getRoomId();
+let roomName;
 
 let connection;
 let myName;
@@ -120,13 +121,21 @@ let incomingFileData;
 let sendInProgress = false;
 let fileShareDataChannelOpen = false;
 
-auth.onAuthStateChanged((user) => {
+auth.onAuthStateChanged(async (user) => {
 
   if (user) {
-    firestore.collection('users').doc(`${user.uid}`).get()
+    await firestore.collection('users').doc(`${user.uid}`).get()
     .then((snapshot) => {
       console.log(snapshot.data().username);
       myName = snapshot.data().username;
+    });
+    await firestore.collection('meetings').doc(`${roomId}`).get()
+    .then(function(doc) {
+      roomName = doc.data().roomName;
+    })
+    .catch(function(err) {
+      alert("couldn't join, room does not exist");
+      window.location.href='/main';
     });
   } 
   else {
@@ -436,12 +445,13 @@ function whoAreYou() {
     <button id="startVideoBtn" class="fas fa-video" onclick="handleVideo(event, true)"></button>`,
     title: `Joining the meeting`, 
     timer: 5000, 
-    didOpen: () => { Swal.showLoading(); timerInterval = setInterval(() => {}, 100); },
+    didOpen: () => { Swal.showLoading(); timerInterval = setInterval(() => {
+      myInfo.innerHTML = myName + " (me)";
+      setPeerImgName("myVideoImg", myName);
+      setPeerChatImgName("right", myName);
+    }, 100); },
     willClose: () => { clearInterval(timerInterval); }, 
   }).then(() => { 
-    myInfo.innerHTML = myName + " (me)";
-    setPeerImgName("myVideoImg", myName);
-    setPeerChatImgName("right", myName);
     joinToChannel();
     welcomeUser(); 
     let ParticipantDiv = getId("participantDiv");
@@ -456,6 +466,7 @@ function whoAreYou() {
       participantsList.insertAdjacentHTML("beforeend", participantDiv);
       participantsList.scrollTop += 500;
     }
+    document.getElementById("meetingName").innerHTML = `${roomName}`;
   });
 
   // start audio-video
@@ -470,20 +481,21 @@ function whoAreYou() {
 // join to chennel and send some peer info
 function joinToChannel() {
   console.log("join to channel", roomId);
-  const meetings = firestore.collection(`${myName}`).doc(`${roomId}`);
-  const snapshot = meetings.get();
+  
+  const mymeetings = firestore.collection(`${myName}`).doc(`${roomId}`);
+  const snapshot = mymeetings.get();
   let date = new Date().toString().slice(0,-34);
   let timestamp = Date.now();
   if (!snapshot.exists) {
     try {
-      meetings.set({ roomId, timestamp, date });
+      mymeetings.set({ roomId, timestamp, date, roomName });
     } catch (err) {
       console.log(err);
     }
   }
   else{
     try {
-      meetings.update({'timestamp':timestamp, 'date':date });
+      mymeetings.update({'timestamp':timestamp, 'date':date });
     } catch (err) {
       console.log(err);
     }
