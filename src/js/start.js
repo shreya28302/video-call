@@ -25,6 +25,7 @@ $('.login-reg-panel input[type="radio"]').on('change', function() {
     }
 });
 
+// set up firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBU4FO5YbU0wCi4DR2Dqbj7kCGeOMKNpyI",
   authDomain: "ms-teams-414ee.firebaseapp.com",
@@ -39,10 +40,11 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 
-let login_button = document.getElementById("login_button");
-let signup_button = document.getElementById("signup_button");
+let loginBtn = document.getElementById("loginBtn");
+let signupBtn = document.getElementById("signupBtn");
 
-login_button.addEventListener("click", async(e) => {
+// login
+loginBtn.addEventListener("click", async(e) => {
     e.preventDefault();
     const email = document.getElementById('login_email').value;
     const password = document.getElementById('login_password').value;
@@ -58,8 +60,9 @@ login_button.addEventListener("click", async(e) => {
     });
 
 });
-  
-signup_button.addEventListener("click", async(e) => {
+
+// signup 
+signupBtn.addEventListener("click", async(e) => {
     e.preventDefault();
     const email = document.getElementById('signup_email').value;
     const username = document.getElementById('signup_username').value;
@@ -68,10 +71,11 @@ signup_button.addEventListener("click", async(e) => {
     const snapshot = await firestore.collection('users').where('username', '==', username).get();
     if (snapshot.empty) {
         auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
+        .then( async (userCredential) => {
+            // store username email to the database
             const user = userCredential.user;
             const currentUser = firestore.collection('users').doc(`${user.uid}`);
-            const snapshot = currentUser.get();
+            const snapshot = await currentUser.get();
             if (!snapshot.exists) {
                 try {
                     currentUser.set({ email, username, password });

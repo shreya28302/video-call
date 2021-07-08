@@ -23,6 +23,7 @@ let serverPort = 4000; // must be same of server PORT
 let server = getServerUrl();
 let roomId = getRoomId();
 let roomName;
+let createdBy;
 
 let connection;
 let myName;
@@ -132,6 +133,7 @@ auth.onAuthStateChanged(async (user) => {
     await firestore.collection('meetings').doc(`${roomId}`).get()
     .then(function(doc) {
       roomName = doc.data().roomName;
+      createdBy = doc.data().createdBy;
     })
     .catch(function(err) {
       alert("couldn't join, room does not exist");
@@ -488,7 +490,7 @@ function joinToChannel() {
   let timestamp = Date.now();
   if (!snapshot.exists) {
     try {
-      mymeetings.set({ roomId, timestamp, date, roomName });
+      mymeetings.set({ roomId, timestamp, date, roomName, createdBy });
     } catch (err) {
       console.log(err);
     }
@@ -857,7 +859,10 @@ function setChatRoomBtn() {
 
   // open hide chat room
   chatRoomBtn.addEventListener("click", (e) => {
-    if (!isChatRoomVisible) showChatRoomDraggable();
+    if (!isChatRoomVisible) {
+      showChatRoomDraggable();
+      msgerChat.scrollTop += msgerChat.scrollHeight;
+    }
     else {
       hideChatRoom();
       e.target.className = "fas fa-comment-dots";
@@ -1211,7 +1216,6 @@ function startStreamRecording() {
   mediaRecorder.start();
   console.log("MediaRecorder started", mediaRecorder);
   isStreamRecording = true;
-  recordStreamBtn.style.setProperty("background-color", "red");
   startRecordingTime();
   screenShareBtn.disabled = true;
   tippy(recordStreamBtn, { content: "Stop recording", placement: "right-start", });
@@ -1234,13 +1238,10 @@ function handleDataAvailable(event) {
 function downloadRecordedStream() {
   try {
     const blob = new Blob(recordedObjects, { type: "video/webm" });
-    const recFileName = getDate() + "-REC.webm";
-    const blobFileSize = bytesToSize(blob.size);
+    const recFileName = getDate() + ".webm";
 
-    Swal.fire({ background: background, position: "top", icon: "success", title: "Success", 
-      html: `<div style="text-align: left;"> FILE: ${recFileName} <br/> SIZE: ${blobFileSize} <br/>
-      Recording is downloaded to your device.</div>`,
-      showConfirmButton: false, 
+    Swal.fire({ background: background, position: "top", showConfirmButton: false, 
+      html: `<div>Success : Recording is downloaded to your device.</div>`,
     });
 
     // save the recorded file to device
@@ -1329,7 +1330,7 @@ function attachMessage( date, time, name, img, side, text, individualMsg) {
 	</div>
   `;
   msgerChat.insertAdjacentHTML("beforeend", msgHTML);
-  msgerChat.scrollTop += 500;
+  msgerChat.scrollTop += msgerChat.scrollHeight;
 }
 
 // Add participants in the chat room lists
@@ -1653,9 +1654,8 @@ function sendFileData() {
     // send file completed
     if (offset === fileToSend.size) {
       sendInProgress = false;
-      Swal.fire({ background: background, position: "top", icon: "success", title: "Success", 
+      Swal.fire({ background: background, position: "top", showConfirmButton: false,
         text: "The file " + fileToSend.name + " was sent successfully.",
-        showConfirmButton: false 
       });
     }
 

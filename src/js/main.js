@@ -2,26 +2,18 @@ $(function(){
  $("a[data-toggle='tooltip']").tooltip();
 });
  
-function getRandomNumber(length) {
+function getRandom(length) {
   let result = "";
-  let characters = "0123456789";
+  let characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   let charactersLength = characters.length;
   for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
   return result;
 }
 
-function getRandomWord(length) {
-  let result = "";
-  let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  let charactersLength = characters.length;
-  for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  return result;
-}
-
+let roomId = getRandom(16); // Generate random room ID
 document.getElementById("roomName").value = "";
-let background = "rgba(48, 48, 48)";
-let txt = getRandomNumber(4) + getRandomWord(8) + getRandomNumber(4);
 
+// set up firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBU4FO5YbU0wCi4DR2Dqbj7kCGeOMKNpyI",
   authDomain: "ms-teams-414ee.firebaseapp.com",
@@ -36,18 +28,14 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 
-const createBtn = document.getElementById("createBtn");
-const logout_button = document.getElementById("logout_button");
 const name = document.getElementById("username");
-let myName;
+const logoutBtn = document.getElementById("logoutBtn");
+const createBtn = document.getElementById("createBtn");
 let meetingsDiv = document.getElementById("meetingsDiv");
-let serverPort = 4000; // must be same of server PORT
-let server = getServerUrl();
 
-// Get Server url
-function getServerUrl() {
-  return ( "http" + (location.hostname == "localhost" ? "" : "s") + "://" + location.hostname + (location.hostname == "localhost" ? ":" + serverPort : "") );
-}
+let myName;
+let port = 4000; // must be same of server 
+let server = "http" + (location.hostname == "localhost" ? "" : "s") + "://" + location.hostname + (location.hostname == "localhost" ? ":" + port : "");
 
 auth.onAuthStateChanged((user) => {
 
@@ -60,61 +48,63 @@ auth.onAuthStateChanged((user) => {
       myName = snapshot.data().username;
       loadMeetings();
     });
-    console.log('Logged In');
+    //console.log('Logged In');
   } 
-  else {
-    window.location.href='/';
-  }
+  else window.location.href='/';
 
 });
 
-
-logout_button.addEventListener("click", async (e) => {
+// logout 
+logoutBtn.addEventListener("click", async (e) => {
   e.preventDefault();
 
   try {
     await auth.signOut();
-    console.log('Log Out!');
+    alert('Log Out!');
     window.location.href = '/';
   } 
   catch (err) {
     alert(err);
   }
   
-})
+});
 
+// creates a room - this gets appended in your user page
 createBtn.addEventListener("click", async (e) => {
   e.preventDefault();
 
-  if(document.getElementById("roomName").value === ""){
+  if(document.getElementById("roomName").value.trim() === ""){
     alert('Please enter a valid room name');
+    document.getElementById("roomName").value = "";
     return;
   }
 
   let timerInterval;
   Swal.fire({ allowEscapeKey: false, allowEnterKey: false, allowOutsideClick: false, 
-    background: background, position: "top", title: `Creating room`, 
+    background: "rgba(48, 48, 48)", position: "top", title: `Creating room`, 
     timer: 2000, 
     didOpen: () => { Swal.showLoading(); timerInterval = setInterval(() => {
-      let roomName = document.getElementById("roomName").value;
-      let roomId = txt;
+      let roomName = document.getElementById("roomName").value.trim(); // set room name
+      // store the created room information 
       const mymeetings = firestore.collection(`${myName}`).doc(`${roomId}`);
       const snapshot = mymeetings.get();
       let timestamp = Date.now();
+      let createdBy = myName;
       let date = new Date().toString().slice(0,-34);
       if (!snapshot.exists) {
         try {
-          mymeetings.set({ roomId, timestamp, date, roomName });
+          mymeetings.set({ roomId, timestamp, date, roomName, createdBy });
         } catch (err) {
           console.log(err);
         }
       }
-
+      
+      // store room Id and room name
       const meetings = firestore.collection('meetings').doc(`${roomId}`);
       const shot = meetings.get();
       if (!shot.exists) {
         try {
-          meetings.set({ roomId, roomName });
+          meetings.set({ roomId, roomName, createdBy });
         } catch (err) {
           console.log(err);
         }
@@ -128,6 +118,8 @@ createBtn.addEventListener("click", async (e) => {
   
 })
 
+// loads all the rooms that a particular user has created and attended
+// with the latest room at the top of the userpage
 function loadMeetings() {
   firestore.collection(`${myName}`).orderBy('timestamp', 'desc').get()
   .then(function(snapshot) {
@@ -150,7 +142,8 @@ function loadMeetings() {
                   </div>
                   <div class="info">
                       <h4>${doc.data().roomName}</h4>
-                      <i style="font-size:0.65em">${doc.data().roomId}</i>
+                      <i style="font-size:0.75em">${doc.data().roomId}</i>
+                      <i style="font-size:0.85em">- by ${doc.data().createdBy}</i>
                       <p class="text-muted">${doc.data().date}</p>
                   </div>
               </div>
@@ -161,7 +154,6 @@ function loadMeetings() {
       </div>
       `;
       meetingsDiv.insertAdjacentHTML("beforeend", meetdiv);
-      meetingsDiv.scrollTop += 500;
     });
   });
 }

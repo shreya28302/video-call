@@ -22,6 +22,7 @@ let serverPort = 4000; // must be same of server PORT
 let server = getServerUrl();
 let roomId = getRoomId();
 let roomName;
+let createdBy;
 
 let connection;
 let myName;
@@ -63,6 +64,7 @@ auth.onAuthStateChanged(async (user) => {
     await firestore.collection('meetings').doc(`${roomId}`).get()
     .then(function(doc) {
       roomName = doc.data().roomName;
+      createdBy = doc.data().createdBy;
     })
     .catch(function(err) {
       alert("couldn't join, room does not exist");
@@ -150,7 +152,7 @@ function startChat() {
     getId("loadingDiv").style.display = "none";
     getHtmlElementsById();
     setButtonsTitle();
-    setChatRoomBtn();
+    setChatRoom();
     setLeaveRoomBtn();
     setShareRoomBtn();
     setJoinCallBtn();
@@ -350,7 +352,7 @@ function joinToChannel() {
   let date = new Date().toString().slice(0,-34);
   if (!snapshot.exists) {
     try {
-      mymeetings.set({ roomId, timestamp, date, roomName });
+      mymeetings.set({ roomId, timestamp, date, roomName, createdBy });
     } catch (err) {
       console.log(err);
     }
@@ -396,7 +398,7 @@ function loadMessages() {
       }
     });
   });
-
+  msgerChat.scrollTop += msgerChat.scrollHeight;
 }
 
 function setPeerChatImgName(image, peerName) {
@@ -407,8 +409,7 @@ function setPeerChatImgName(image, peerName) {
   }
 }
 
-function setChatRoomBtn() {
-
+function setChatRoom() {
   // show msger participants section
   msgerIBtn.addEventListener("click", (e) => {
     if (!thereAreConnections()) {
@@ -534,7 +535,7 @@ function attachMessage( date, time, name, img, side, text, individualMsg) {
 	</div>
   `;
   msgerChat.insertAdjacentHTML("beforeend", msgHTML);
-  msgerChat.scrollTop += 500;
+  msgerChat.scrollTop += msgerChat.scrollHeight;
 }
 
 // Add participants in the chat room lists
