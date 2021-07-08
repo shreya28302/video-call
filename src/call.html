@@ -16,10 +16,10 @@
     
   </head>
 
-  <body onload="startRoom()">
+  <body onload="Call()">
 
     <!-- show this before to join -->
-    <div id="loadingDiv"><h1>Loading...</h1></div>
+    <div id="loadingDiv"><h1 style="font-size: 70px;">Loading...</h1></div>
 
     <!-- Start bottom buttons -->
     <div id="bottomButtons">
@@ -38,7 +38,8 @@
         <button id="usersCloseBtn" class="fas fa-times"></button>
       </header>
       <main>
-        <p style="font-size:2em; color:#9477CB; font-weight:bold;" id="meetingName"></p>
+        <p style="color:#9477CB; font-weight:bold;" id="meetingName"></p>
+        <p style="font-size:0.8em; color:white;" id="createdBy"></p>
         <br />
         <button id="shareRoomBtn" class="fas fa-user-plus">Invite</button>
         <br />
@@ -54,12 +55,12 @@
     <!-- Start chat room -->
     <section id="msgerDraggable" class="msger-draggable">
       <section id="msger" class="msger">
-        <header id="msgerHeader" class="msger-header">
+        <header class="msger-header">
           <div class="msger-header-title">
             <i class="fas fa-comment-alt"></i> Chat
           </div>
           <div class="msger-header-options">
-            <button id="msgerIBtn" class="fas fa-users"></button>
+            <button id="msgerIBtn" class="fas fa-user"></button>
             <button id="msgerClose" class="fas fa-times"></button>
           </div>
         </header>
@@ -77,7 +78,7 @@
         <section id="msgerISec" class="msger">
           <header id="msgerIHeader" class="msger-individual-header">
             <div class="msger-header-title">
-              <i class="fas fa-comment-alt"></i> Send individual messages
+              <i class="fas fa-comment-alt"></i> individual messages
             </div>
             <div class="msger-header-options">
               <button id="msgerICloseBtn" class="fas fa-times"></button>

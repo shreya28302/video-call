@@ -16,14 +16,15 @@
     
   </head>
 
-  <body onload="startChat()">
+  <body onload="Chat()">
 
     <!-- show this before to join -->
-    <div id="loadingDiv"><h1>Loading...</h1></div>
+    <div id="loadingDiv"><h1 style="font-size: 70px;">Loading...</h1></div>
 
     <section id="users">
       <main>
-        <p style="font-size:2em; color:#9477CB; font-weight:bold;" id="meetingName"></p>
+        <p style="color:#9477CB; font-weight:bold;" id="meetingName"></p>
+        <p style="font-size:0.8em; color:white;" id="createdBy"></p>
         <br />
         <button id="shareRoomBtn" class="fas fa-user-plus"></button>
         <button id="joinCallBtn" class="fa fa-phone"></button>
@@ -46,7 +47,7 @@
             <i class="fas fa-comment-alt"></i> Chat
           </div>
           <div class="msger-header-options">
-            <button id="msgerIBtn" class="fas fa-users"></button>
+            <button id="msgerIBtn" class="fas fa-user"></button>
           </div>
         </header>
 
@@ -63,7 +64,7 @@
         <section id="msgerISec" class="msger">
           <header id="msgerIHeader" class="msger-individual-header">
             <div class="msger-header-title">
-              <i class="fas fa-comment-alt"></i> Send individual messages
+              <i class="fas fa-comment-alt"></i> individual messages
             </div>
             <div class="msger-header-options">
               <button id="msgerICloseBtn" class="fas fa-times"></button>

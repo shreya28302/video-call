@@ -1,5 +1,6 @@
 "use strict"; 
 
+// set up firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBU4FO5YbU0wCi4DR2Dqbj7kCGeOMKNpyI",
   authDomain: "ms-teams-414ee.firebaseapp.com",
@@ -18,9 +19,9 @@ const isWebRTCSupported = DetectRTC.isWebRTCSupported;
 const imgUrl = "https://eu.ui-avatars.com/api";
 
 let background = "rgba(48, 48, 48)"; 
-let serverPort = 4000; // must be same of server PORT
-let server = getServerUrl();
-let roomId = getRoomId();
+let port = 4000; // must be same of server 
+let server = "http" + (location.hostname == "localhost" ? "" : "s") + "://" + location.hostname + (location.hostname == "localhost" ? ":" + port : "")
+let roomId = location.pathname.substring(6);
 let roomName;
 let createdBy;
 
@@ -29,11 +30,9 @@ let myName;
 let socket; 
 
 let connections = {}; 
-let chatDataChannels = {};  
+let chatChannels = {};  
 let iceServers = [{ urls: "stun:stun.l.google.com:19302" }]; 
 
-let users;
-// chat room elements
 let msgerDraggable;
 let msgerHeader;
 let msgerIBtn;
@@ -44,21 +43,22 @@ let msgerI;
 let msgerIHeader;
 let msgerICloseBtn;
 let msgerIList;
-
 let leftChatImg;
 let rightChatImg;
-
+let users;
 let participantsList;
 let shareRoomBtn;
 let joinCallBtn;
 let leaveRoomBtn;
 
+// get name and room name
+// couldn't join - if room is not created 
 auth.onAuthStateChanged(async (user) => {
 
   if (user) {
     await firestore.collection('users').doc(`${user.uid}`).get()
     .then((snapshot) => {
-      console.log(snapshot.data().username);
+      //console.log(snapshot.data().username);
       myName = snapshot.data().username;
     });
     await firestore.collection('meetings').doc(`${roomId}`).get()
@@ -77,8 +77,7 @@ auth.onAuthStateChanged(async (user) => {
 
 });
 
-// Html elements 
-function getHtmlElementsById() {
+function setElements() {
   users = getId("users");
   msgerDraggable = getId("msgerDraggable");
   msgerHeader = getId("msgerHeader");
@@ -94,52 +93,24 @@ function getHtmlElementsById() {
   shareRoomBtn = getId("shareRoomBtn");
   joinCallBtn = getId("joinCallBtn");
   leaveRoomBtn = getId("leaveRoomBtn");
-}
 
-function setButtonsTitle() {
   tippy(msgerIBtn, { content: "Individual messages", });
   tippy(shareRoomBtn, { content: "Invite people to join", placement: "right-start", });
   tippy(joinCallBtn, { content: "Join call", placement: "right-start", });
   tippy(leaveRoomBtn, { content: "Leave chat", placement: "right-start", });
 }
 
-// Get Server url
-function getServerUrl() {
-  return ( "http" + (location.hostname == "localhost" ? "" : "s") + "://" + location.hostname + (location.hostname == "localhost" ? ":" + serverPort : "") );
-}
-
-// Generate random Room id
-function getRoomId() {
-  // skip /join/
-  let roomId = location.pathname.substring(6);
-  if (roomId == "") {
-    roomId = makeId(15);
-    const newurl = server + "/join/" + roomId;
-    window.history.pushState({ url: newurl }, roomId, newurl);
-  }
-  return roomId;
-}
-
-// Generate random Id
-function makeId(length) {
-  let result = "";
-  let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let charactersLength = characters.length;
-  for (let i = 0; i < length; i++) result += characters.charAt(Math.floor(Math.random() * charactersLength));  
-  return result;
-}
-
-// Check if there is peer connections
+// Check if there are peer connections
 function thereAreConnections() {
   if (Object.keys(connections).length === 0) return false;
   return true;
 }
 
 // On body load Get started
-function startChat() {
+function Chat() {
 
   if (!isWebRTCSupported) {
-    alert("error: This browser seems not supported WebRTC!");
+    alert("error: This browser does not support WebRTC");
     return;
   }
 
@@ -150,13 +121,12 @@ function startChat() {
   socket.on("connect", () => {
     console.log("Connected to server");
     getId("loadingDiv").style.display = "none";
-    getHtmlElementsById();
-    setButtonsTitle();
+    setElements();
     setChatRoom();
     setLeaveRoomBtn();
     setShareRoomBtn();
     setJoinCallBtn();
-    whoAreYou();;
+    start();
   });
 
 
@@ -194,10 +164,10 @@ function startChat() {
       event.channel.onmessage = (msg) => {
         switch (event.channel.label) {
           case "chat_channel":
-            let dataMessage = {};
+            let message = {};
             try {
-              dataMessage = JSON.parse(msg.data);
-              handleDataChannelChat(dataMessage);
+              message = JSON.parse(msg.data);
+              ChatChannel(message);
             } 
             catch (err) {
               console.log(err);
@@ -206,26 +176,26 @@ function startChat() {
         }
       };
     };
-    createChatDataChannel(peer_id);
+    createChatChannel(peer_id);
 
     if (config.should_create_offer) {
 
-      console.log("Creating RTC offer to", peer_id);
+      console.log("creating RTC offer to", peer_id);
       connections[peer_id].createOffer()
       .then((local_description) => {
-        console.log("Local offer description is", local_description);
+        console.log("local offer description is", local_description);
         connections[peer_id].setLocalDescription(local_description)
           .then(() => {
             socket.emit("SDP", { peer_id: peer_id, session_description: local_description, });
-            console.log("Offer setLocalDescription done!");
+            console.log("offer setLocalDescription done!");
           })
           .catch((err) => {
-            console.error("[Error] offer setLocalDescription", err);
-            alert("error: Offer setLocalDescription failed " + err);
+            console.error("error: offer setLocalDescription", err);
+            alert("error: offer setLocalDescription failed " + err);
           });
         })
       .catch((err) => {
-        console.error("Error sending offer", err);
+        console.error("error: sending offer", err);
       });
     }
 
@@ -242,27 +212,27 @@ function startChat() {
       .then(() => {
         console.log("setRemoteDescription done!");
         if (remote_description.type == "offer") {
-          console.log("Creating answer");
+          console.log("creating answer");
           connections[peer_id].createAnswer()
             .then((local_description) => {
-              console.log("Answer description is: ", local_description);
+              console.log("answer description is: ", local_description);
               connections[peer_id].setLocalDescription(local_description)
                 .then(() => {
                   socket.emit("SDP", { peer_id: peer_id, session_description: local_description, });
-                  console.log("Answer setLocalDescription done!");
+                  console.log("answer setLocalDescription done!");
                 })
                 .catch((err) => {
-                  console.error("[Error] answer setLocalDescription", err);
-                  alert("error: Answer setLocalDescription failed " + err);
+                  console.error("error: answer setLocalDescription", err);
+                  alert("error: answer setLocalDescription failed " + err);
                 });
             })
             .catch((err) => {
-              console.error("[Error] creating answer", err);
+              console.error("error: creating answer", err);
             });
         } 
       })
       .catch((err) => {
-        console.error("[Error] setRemoteDescription", err);
+        console.error("error: setRemoteDescription", err);
       });
   });
 
@@ -274,7 +244,7 @@ function startChat() {
     connections[peer_id]
     .addIceCandidate(new RTCIceCandidate(ice_candidate))
     .catch((err) => {
-      console.error("Error addIceCandidate", err);
+      console.error("error: addIceCandidate", err);
       alert("error: addIceCandidate failed " + err);
     });
   });
@@ -289,7 +259,7 @@ function startChat() {
       msgerRemovePeer(peer_id);
       participantRemovePeer(peer_id);
     }
-    chatDataChannels = {};
+    chatChannels = {};
     connections = {};
   });
 
@@ -304,15 +274,14 @@ function startChat() {
     msgerRemovePeer(peer_id);
     participantRemovePeer(peer_id);
 
-    delete chatDataChannels[peer_id];
+    delete chatChannels[peer_id];
     delete connections[peer_id];
   });
 
-} // end [startChat]
+} // end Chat
 
 
-// set your name for the conference
-function whoAreYou() {
+function start() {
 
   let timerInterval;
   Swal.fire({ allowEscapeKey: false, allowEnterKey: false, allowOutsideClick: false, 
@@ -324,9 +293,9 @@ function whoAreYou() {
     willClose: () => { clearInterval(timerInterval); }, 
   }).then(() => { 
     joinToChannel();
-    welcomeUser(); 
+    welcomeMessage(); 
+    // add my name to the participant list
     let ParticipantDiv = getId("participantDiv");
-    // if there isn't add it....
     if (!ParticipantDiv) {
       let my = myName + " (me)";
       let participantDiv = `
@@ -338,14 +307,18 @@ function whoAreYou() {
       participantsList.scrollTop += 500;
     }
     document.getElementById("meetingName").innerHTML = `${roomName}`;
+    document.getElementById("createdBy").innerHTML = `- created by ${createdBy}`;
   });
 
 }
 
-// join to chennel and send some peer info
+// join to channel and send some peer info
 function joinToChannel() {
   console.log("join to channel", roomId);
-
+  
+  // store the room info to my meetings
+  // if room does not exist set the whole info
+  // if room exists update timestamp and date (to track for the recent call made) 
   const mymeetings = firestore.collection(`${myName}`).doc(`${roomId}`);
   const snapshot = mymeetings.get();
   let timestamp = Date.now();
@@ -368,7 +341,7 @@ function joinToChannel() {
 }
 
 // welcome message
-function welcomeUser() {
+function welcomeMessage() {
 
   loadMessages();
   const myRoomUrl = window.location.href;
@@ -380,8 +353,12 @@ function welcomeUser() {
 
 }
 
+// get the previous messages in a particular room from firebase 
 function loadMessages() {
-
+  
+  // if the sender of the message is myself attach the message to the right,
+  // if not attach to the left and if message is individual add the reciever name to the message
+  // if the message from others is individual and if reciever is myself attach the message, if not do nothing
   firestore.collection('messages').doc(`${roomId}`).collection(`${roomId}`).orderBy('timestamp', 'asc').get()
   .then(function(snapshot) {
     snapshot.forEach(function(doc) {
@@ -410,7 +387,8 @@ function setPeerChatImgName(image, peerName) {
 }
 
 function setChatRoom() {
-  // show msger participants section
+
+  // show msger participants 
   msgerIBtn.addEventListener("click", (e) => {
     if (!thereAreConnections()) {
       notify("No participants online in the room");
@@ -419,10 +397,9 @@ function setChatRoom() {
     msgerI.style.display = "flex";
   });
 
-  // hide msger participants section
+  // hide msger participants 
   msgerICloseBtn.addEventListener("click", (e) => { msgerI.style.display = "none"; });
 
-  // Execute a function when the user releases a key on the keyboard
   msgerInput.addEventListener("keyup", (e) => {
     // Number 13 is the "Enter" key on the keyboard
     if (e.keyCode === 13) {
@@ -433,12 +410,12 @@ function setChatRoom() {
 
   // chat send msg
   msgerSendBtn.addEventListener("click", (e) => {
-    // prevent refresh page
     e.preventDefault();
-
+    
+    // if there are no peers in the room store the message in firebase and attach it to the message box
     if (!thereAreConnections()) {
       const msg = msgerInput.value;
-      onlytofirebase(myName, "toAll", msg, false);
+      toFirebase(myName, "toAll", msg, false);
       let date = new Date().toString().slice(0,-34).substring(0,15);
       let time = new Date().toString().slice(0,-34).substring(16,21);
       attachMessage(date, time, myName, rightChatImg, "right", msg, false);
@@ -447,10 +424,9 @@ function setChatRoom() {
     }
 
     const msg = msgerInput.value;
-    // empity msg
     if (!msg) return;
 
-    emitMsg(myName, "toAll", msg, false, "");
+    sendMessage(myName, "toAll", msg, false, "");
     let date = new Date().toString().slice(0,-34).substring(0,15);
     let time = new Date().toString().slice(0,-34).substring(16,21);
     attachMessage( date, time, myName, rightChatImg, "right", msg, false);
@@ -472,15 +448,15 @@ function setShareRoomBtn() {
   });
 }
 
+// join the call of this room
 function setJoinCallBtn() {
   joinCallBtn.addEventListener("click", async (e) => {
     window.location.href='/join/' + roomId;
   });
 }
 
-// Copy Room URL to clipboard
+// copy room url to clipboard
 function copyRoomURL() {
-  // save Room Url to clipboard
   let roomURL = window.location.href;
   let tmpInput = document.createElement("input");
   document.body.appendChild(tmpInput);
@@ -492,27 +468,25 @@ function copyRoomURL() {
 }
 
 // Create Chat Room Data Channel
-function createChatDataChannel(peer_id) { chatDataChannels[peer_id] = connections[peer_id].createDataChannel( "chat_channel" ); }
+function createChatChannel(peer_id) { chatChannels[peer_id] = connections[peer_id].createDataChannel( "chat_channel" ); }
 
-// handle Incoming Data Channel Chat Messages
-function handleDataChannelChat(dataMessages) {
-  switch (dataMessages.type) {
+// Incoming Channel Messages
+function ChatChannel(messages) {
+  switch (messages.type) {
     case "chat":
-      // individual message but not for me return
-      if (dataMessages.individualMsg && dataMessages.toName != myName) return;
-      // log incoming dataMessages json
-      console.log("handleDataChannelChat", dataMessages);
-      setPeerChatImgName("left", dataMessages.name);
+      if (messages.individualMsg && messages.toName != myName) return; // individual message but not for me return
+      //console.log("ChatChannel", messages); // log incoming messages json
+      setPeerChatImgName("left", messages.name);
       let date = new Date().toString().slice(0,-34).substring(0,15);
       let time = new Date().toString().slice(0,-34).substring(16,21);
-      attachMessage( date, time, dataMessages.name, leftChatImg, "left", dataMessages.msg, dataMessages.individualMsg );
+      attachMessage( date, time, messages.name, leftChatImg, "left", messages.msg, messages.individualMsg );
       break;
     
     default: break;
   }
 }
 
-// Append Message to msger chat room
+// attch message to message box
 function attachMessage( date, time, name, img, side, text, individualMsg) {
 
   // check if i receive a individual message
@@ -538,46 +512,44 @@ function attachMessage( date, time, name, img, side, text, individualMsg) {
   msgerChat.scrollTop += msgerChat.scrollHeight;
 }
 
-// Add participants in the chat room lists
+// add all current participants in the room to msger list
 function msgerAddPeers(peers) {
-  // add all current Participants
+
   for (let peer_id in peers) {
     let peer_name = peers[peer_id]["peer_name"];
-    // bypass insert to myself in the list :)
+    
     if (peer_name != myName) {
-      let MsgerIndividualDiv = getId(peer_id + "_iMsgDiv");
-      // if there isn't add it....
+      let MsgerIndividualDiv = getId(peer_id + "_imsgDiv");
+      
       if (!MsgerIndividualDiv) {
         let msgerIndividualDiv = `
-        <div id="${peer_id}_iMsgDiv" class="msger-inputarea">
-          <input
-            id="${peer_id}_iMsgInput"
-            class="msger-input"
-            type="text"
-            placeholder="Enter your message..."
-          />
-          <button id="${peer_id}_iMsgBtn" class="fas fa-paper-plane" value="${peer_name}">&nbsp;${peer_name}</button>
+        <div id="${peer_id}_imsgDiv" class="msger-inputarea">
+          <input id="${peer_id}_imsgInput" class="msger-input" type="text" placeholder="Enter your message..."/>
+          <button id="${peer_id}_imsgBtn" class="fas fa-paper-plane" value="${peer_name}">&nbsp;${peer_name}</button>
         </div>
         `;
         msgerIList.insertAdjacentHTML("beforeend", msgerIndividualDiv);
         msgerIList.scrollTop += 500;
 
-        let msgerIndividualMsgInput = getId(peer_id + "_iMsgInput");
-        let msgerIndividualBtn = getId(peer_id + "_iMsgBtn");
+        let msgerIndividualMsgInput = getId(peer_id + "_imsgInput");
+        let msgerIndividualBtn = getId(peer_id + "_imsgBtn");
         addMsgerIndividualBtn(msgerIndividualBtn, msgerIndividualMsgInput, peer_id);
       }
+
     }
+
   }
 }
 
+// add all current participants in the room to users list
 function participantAddPeers(peers) {
-  // add all current Participants
+
   for (let peer_id in peers) {
     let peer_name = peers[peer_id]["peer_name"];
-    // bypass insert to myself in the list :)
+    
     if (peer_name != myName) {
       let ParticipantDiv = getId(peer_id + "_participantDiv");
-      // if there isn't add it....
+      
       if (!ParticipantDiv) {
         let participantDiv = `
         <div id="${peer_id}_participantDiv" class="participants-area">
@@ -587,13 +559,15 @@ function participantAddPeers(peers) {
         participantsList.insertAdjacentHTML("beforeend", participantDiv);
         participantsList.scrollTop += 500;
       }
+
     }
+
   }
 }
 
-// Remove participant from chat room lists
+// Remove participant from msger room lists
 function msgerRemovePeer(peer_id) {
-  let msgerIndividualDiv = getId(peer_id + "_iMsgDiv");
+  let msgerIndividualDiv = getId(peer_id + "_imsgDiv");
   if (msgerIndividualDiv) {
     let peerToRemove = msgerIndividualDiv.firstChild;
     while (peerToRemove) {
@@ -604,6 +578,7 @@ function msgerRemovePeer(peer_id) {
   }
 }
 
+// Remove participant from user lists
 function participantRemovePeer(peer_id) {
   let participantDiv = getId(peer_id + "_participantDiv");
   if (participantDiv) {
@@ -621,14 +596,14 @@ function addMsgerIndividualBtn(msgerIndividualBtn, msgerIndividualMsgInput, peer
   // add button to send individual messages
   msgerIndividualBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    let iMsg = msgerIndividualMsgInput.value;
-    if (!iMsg) return;
+    let imsg = msgerIndividualMsgInput.value;
+    if (!imsg) return;
     let toPeerName = msgerIndividualBtn.value;
 
-    emitMsg(myName, toPeerName, iMsg, true, peer_id);
+    sendMessage(myName, toPeerName, imsg, true, peer_id);
     let date = new Date().toString().slice(0,-34).substring(0,15);
     let time = new Date().toString().slice(0,-34).substring(16,21);
-    attachMessage( date,time, myName, rightChatImg, "right", iMsg + "<br/><hr>to " + toPeerName, true );
+    attachMessage( date,time, myName, rightChatImg, "right", imsg + "<br/><hr>to " + toPeerName, true );
     msgerIndividualMsgInput.value = "";
     msgerI.style.display = "none";
   });
@@ -646,36 +621,17 @@ function detectUrl(text) {
 // Check if url passed is a image
 function isImageURL(url) { return url.match(/\.(jpeg|jpg|gif|png|tiff|bmp)$/) != null; }
 
-// Format data h:m:s
-function getFormatDate(date) {
-  const time = date.toTimeString().split(" ")[0];
-  return `${time}`;
-}
-
 // Send message over Secure dataChannels
-function emitMsg(name, toName, msg, individualMsg, peer_id) {
+function sendMessage(name, toName, msg, individualMsg, peer_id) {
   if (msg) {
     const chatMessage = { type: "chat", name: name, toName: toName, msg: msg, individualMsg: individualMsg, };
     // peer to peer over DataChannels
-    Object.keys(chatDataChannels).map((peerId) => chatDataChannels[peerId].send(JSON.stringify(chatMessage)) );
-    //console.log("Send msg", chatMessage);
-
-    let date = new Date().toString().slice(0,-34).substring(0,15);
-    let time = new Date().toString().slice(0,-34).substring(16,21);
-    let timestamp = Date.now();
-    const messages = firestore.collection('messages').doc(`${roomId}`).collection(`${roomId}`).doc(`${timestamp}`);
-    const snapshot = messages.get();
-    if (!snapshot.exists) {
-      try {
-        messages.set({ name, toName, msg, individualMsg, date, time, timestamp });
-      } catch (err) {
-        console.log(err);
-      }
-    }
+    Object.keys(chatChannels).map((peerId) => chatChannels[peerId].send(JSON.stringify(chatMessage)) );
+    toFirebase(name, toName, msg, individualMsg);
   }
 }
 
-function onlytofirebase(name, toName, msg, individualMsg) {
+function toFirebase(name, toName, msg, individualMsg) {
   let date = new Date().toString().slice(0,-34).substring(0,15);
   let time = new Date().toString().slice(0,-34).substring(16,21);
   let timestamp = Date.now();
@@ -694,7 +650,7 @@ function onlytofirebase(name, toName, msg, individualMsg) {
 function leaveRoom() {
   let callLink = server + '/join/' + roomId;
   Swal.fire({ background: background, position: "top", title: "Leave this room?",
-    html: `<p>If you want to join call,</br> go the main page and<br/> click on call of this room</p>`,
+    html: `<p>If you want to join call, go the main page <br />and click on call of this room</p>`,
     showDenyButton: true, confirmButtonText: `Yes`, confirmButtonColor: 'black', denyButtonText: `No`, denyButtonColor: 'grey',
   }).then((result) => { if (result.isConfirmed) window.location.href = "/main"; });
 }
