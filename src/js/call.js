@@ -472,9 +472,18 @@ function joinToChannel() {
   console.log("join to channel", roomId);
   const meetings = firestore.collection(`${myName}`).doc(`${roomId}`);
   const snapshot = meetings.get();
+  let date = new Date().toString().slice(0,-34);
+  let timestamp = Date.now();
   if (!snapshot.exists) {
     try {
-      meetings.set({ roomId });
+      meetings.set({ roomId, timestamp, date });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  else{
+    try {
+      meetings.update({'timestamp':timestamp, 'date':date });
     } catch (err) {
       console.log(err);
     }
@@ -878,9 +887,8 @@ function setChatRoomBtn() {
     if (!thereAreConnections()) {
       const msg = msgerInput.value;
       onlytofirebase(myName, "toAll", msg, false);
-      let current = new Date();
-      let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-      let time = current.getHours() + ":" + current.getMinutes();
+      let date = new Date().toString().slice(0,-34).substring(0,15);
+      let time = new Date().toString().slice(0,-34).substring(16,21);
       attachMessage(date, time, myName, rightChatImg, "right", msg, false);
       msgerInput.value = "";
       return;
@@ -891,15 +899,15 @@ function setChatRoomBtn() {
     if (!msg) return;
 
     emitMsg(myName, "toAll", msg, false, "");
-    let current = new Date();
-    let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-    let time = current.getHours() + ":" + current.getMinutes();
+    let date = new Date().toString().slice(0,-34).substring(0,15);
+    let time = new Date().toString().slice(0,-34).substring(16,21);
     attachMessage(date, time, myName, rightChatImg, "right", msg, false);
     msgerInput.value = "";
   });
 }
 
 function loadMessages() {
+
   firestore.collection('messages').doc(`${roomId}`).collection(`${roomId}`).orderBy('timestamp', 'asc').get()
   .then(function(snapshot) {
     snapshot.forEach(function(doc) {
@@ -916,6 +924,7 @@ function loadMessages() {
       }
     });
   });
+
 }
 
 function setMyHandBtn() { myHandBtn.addEventListener("click", async (e) => { setMyHandStatus(); }); }
@@ -1145,7 +1154,7 @@ function startRecordingTime() {
   setInterval(function printTime() {
     if (isStreamRecording) {
       recElapsedTime = Date.now() - recStartTime;
-      myInfo.innerHTML = myName + "&nbsp;&nbsp; 🔴 REC " + getTimeToString(recElapsedTime);
+      myInfo.innerHTML = myName + "&nbsp;&nbsp;  REC " + getTimeToString(recElapsedTime);
       return;
     }
   }, 1000);
@@ -1213,7 +1222,7 @@ function handleDataAvailable(event) {
 function downloadRecordedStream() {
   try {
     const blob = new Blob(recordedObjects, { type: "video/webm" });
-    const recFileName = getDataTimeString() + "-REC.webm";
+    const recFileName = getDate() + "-REC.webm";
     const blobFileSize = bytesToSize(blob.size);
 
     Swal.fire({ background: background, position: "top", icon: "success", title: "Success", 
@@ -1276,9 +1285,8 @@ function handleDataChannelChat(dataMessages) {
       }
       
       setPeerChatImgName("left", dataMessages.name);
-      let current = new Date();
-      let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-      let time = current.getHours() + ":" + current.getMinutes();
+      let date = new Date().toString().slice(0,-34).substring(0,15);
+      let time = new Date().toString().slice(0,-34).substring(16,21);
       attachMessage( date, time, dataMessages.name, leftChatImg, "left", dataMessages.msg, dataMessages.individualMsg );
       break;
     
@@ -1400,9 +1408,8 @@ function addMsgerIndividualBtn(msgerIndividualBtn, msgerIndividualMsgInput, peer
     let toPeerName = msgerIndividualBtn.value;
 
     emitMsg(myName, toPeerName, iMsg, true, peer_id);
-    let current = new Date();
-    let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-    let time = current.getHours() + ":" + current.getMinutes();
+    let date = new Date().toString().slice(0,-34).substring(0,15);
+    let time = new Date().toString().slice(0,-34).substring(16,21);
     attachMessage( date, time, myName, rightChatImg, "right", iMsg + "<br/><hr>to " + toPeerName, true );
     msgerIndividualMsgInput.value = "";
     msgerI.style.display = "none";
@@ -1428,9 +1435,8 @@ function emitMsg(name, toName, msg, individualMsg, peer_id) {
     // peer to peer over DataChannels
     Object.keys(chatDataChannels).map((peerId) => chatDataChannels[peerId].send(JSON.stringify(chatMessage)) );
     //console.log("Send msg", chatMessage);
-    let current = new Date();
-    let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-    let time = current.getHours() + ":" + current.getMinutes();
+    let date = new Date().toString().slice(0,-34).substring(0,15);
+    let time = new Date().toString().slice(0,-34).substring(16,21);
     let timestamp = Date.now();
     const messages = firestore.collection('messages').doc(`${roomId}`).collection(`${roomId}`).doc(`${timestamp}`);
     const snapshot = messages.get();
@@ -1445,9 +1451,8 @@ function emitMsg(name, toName, msg, individualMsg, peer_id) {
 }
 
 function onlytofirebase(name, toName, msg, individualMsg) {
-  let current = new Date();
-  let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-  let time = current.getHours() + ":" + current.getMinutes();
+  let date = new Date().toString().slice(0,-34).substring(0,15);
+  let time = new Date().toString().slice(0,-34).substring(16,21);
   let timestamp = Date.now();
   const messages = firestore.collection('messages').doc(`${roomId}`).collection(`${roomId}`).doc(`${timestamp}`);
   const snapshot = messages.get();
@@ -1869,10 +1874,9 @@ function dragElement(elmnt, dragObj) {
 }
 
 // Data Formated DD-MM-YYYY-H_M_S
-function getDataTimeString() {
-  const d = new Date();
-  const date = d.toISOString().split("T")[0];
-  const time = d.toTimeString().split(" ")[0];
+function getDate() {
+  const date = new Date().toString().slice(0,-34).substring(0,15);
+  const time = new Date().toString().slice(0,-34).substring(16,21);
   return `${date}-${time}`;
 }
 

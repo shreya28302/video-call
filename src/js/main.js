@@ -98,7 +98,7 @@ logout_button.addEventListener("click", async (e) => {
 })
 
 function loadMeetings() {
-  firestore.collection(`${myName}`).get()
+  firestore.collection(`${myName}`).orderBy('timestamp', 'desc').get()
   .then(function(snapshot) {
     snapshot.forEach(function(doc) {
       console.log(doc.data().roomId);
@@ -119,6 +119,7 @@ function loadMeetings() {
                   </div>
                   <div class="info">
                       <h4>${doc.data().roomId}</h4>
+                      <p class="text-muted">${doc.data().date}</p>
                   </div>
               </div>
               <div class="clearfix"></div>

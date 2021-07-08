@@ -330,9 +330,18 @@ function joinToChannel() {
   console.log("join to channel", roomId);
   const meetings = firestore.collection(`${myName}`).doc(`${roomId}`);
   const snapshot = meetings.get();
+  let timestamp = Date.now();
+  let date = new Date().toString().slice(0,-34);
   if (!snapshot.exists) {
     try {
-      meetings.set({ roomId });
+      meetings.set({ roomId, timestamp, date });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  else{
+    try {
+      meetings.update({'timestamp':timestamp, 'date':date });
     } catch (err) {
       console.log(err);
     }
@@ -354,6 +363,7 @@ function welcomeUser() {
 }
 
 function loadMessages() {
+
   firestore.collection('messages').doc(`${roomId}`).collection(`${roomId}`).orderBy('timestamp', 'asc').get()
   .then(function(snapshot) {
     snapshot.forEach(function(doc) {
@@ -370,6 +380,7 @@ function loadMessages() {
       }
     });
   });
+
 }
 
 function setPeerChatImgName(image, peerName) {
@@ -411,9 +422,8 @@ function setChatRoomBtn() {
     if (!thereAreConnections()) {
       const msg = msgerInput.value;
       onlytofirebase(myName, "toAll", msg, false);
-      let current = new Date();
-      let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-      let time = current.getHours() + ":" + current.getMinutes();
+      let date = new Date().toString().slice(0,-34).substring(0,15);
+      let time = new Date().toString().slice(0,-34).substring(16,21);
       attachMessage(date, time, myName, rightChatImg, "right", msg, false);
       msgerInput.value = "";
       return;
@@ -424,9 +434,8 @@ function setChatRoomBtn() {
     if (!msg) return;
 
     emitMsg(myName, "toAll", msg, false, "");
-    let current = new Date();
-    let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-    let time = current.getHours() + ":" + current.getMinutes();
+    let date = new Date().toString().slice(0,-34).substring(0,15);
+    let time = new Date().toString().slice(0,-34).substring(16,21);
     attachMessage( date, time, myName, rightChatImg, "right", msg, false);
     msgerInput.value = "";
   });
@@ -472,9 +481,8 @@ function handleDataChannelChat(dataMessages) {
       // log incoming dataMessages json
       console.log("handleDataChannelChat", dataMessages);
       setPeerChatImgName("left", dataMessages.name);
-      let current = new Date();
-      let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-      let time = current.getHours() + ":" + current.getMinutes();
+      let date = new Date().toString().slice(0,-34).substring(0,15);
+      let time = new Date().toString().slice(0,-34).substring(16,21);
       attachMessage( date, time, dataMessages.name, leftChatImg, "left", dataMessages.msg, dataMessages.individualMsg );
       break;
     
@@ -596,9 +604,8 @@ function addMsgerIndividualBtn(msgerIndividualBtn, msgerIndividualMsgInput, peer
     let toPeerName = msgerIndividualBtn.value;
 
     emitMsg(myName, toPeerName, iMsg, true, peer_id);
-    let current = new Date();
-    let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-    let time = current.getHours() + ":" + current.getMinutes();
+    let date = new Date().toString().slice(0,-34).substring(0,15);
+    let time = new Date().toString().slice(0,-34).substring(16,21);
     attachMessage( date,time, myName, rightChatImg, "right", iMsg + "<br/><hr>to " + toPeerName, true );
     msgerIndividualMsgInput.value = "";
     msgerI.style.display = "none";
@@ -631,9 +638,8 @@ function emitMsg(name, toName, msg, individualMsg, peer_id) {
     Object.keys(chatDataChannels).map((peerId) => chatDataChannels[peerId].send(JSON.stringify(chatMessage)) );
     //console.log("Send msg", chatMessage);
 
-    let current = new Date();
-    let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-    let time = current.getHours() + ":" + current.getMinutes();
+    let date = new Date().toString().slice(0,-34).substring(0,15);
+    let time = new Date().toString().slice(0,-34).substring(16,21);
     let timestamp = Date.now();
     const messages = firestore.collection('messages').doc(`${roomId}`).collection(`${roomId}`).doc(`${timestamp}`);
     const snapshot = messages.get();
@@ -648,9 +654,8 @@ function emitMsg(name, toName, msg, individualMsg, peer_id) {
 }
 
 function onlytofirebase(name, toName, msg, individualMsg) {
-  let current = new Date();
-  let date = current.getFullYear() + '-' + (current.getMonth() + 1) + '-' + current.getDate();
-  let time = current.getHours() + ":" + current.getMinutes();
+  let date = new Date().toString().slice(0,-34).substring(0,15);
+  let time = new Date().toString().slice(0,-34).substring(16,21);
   let timestamp = Date.now();
   const messages = firestore.collection('messages').doc(`${roomId}`).collection(`${roomId}`).doc(`${timestamp}`);
   const snapshot = messages.get();
