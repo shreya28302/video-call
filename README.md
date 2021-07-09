@@ -6,7 +6,7 @@ project-link : https://evening-basin-41332.herokuapp.com/ <br />
 demo-video :
 
 # Features and Functionalities
-Set a meeting name to create your room <br />
+* Set a meeting name to create your room <br />
 Multi-participants <br />
 Unlimited number of rooms <br />
 Unlimited duration calls <br />
