@@ -369,29 +369,8 @@ textarea {
     margin-bottom: 5px;
 }
 
-/*--------------------------------------------------------------
-# Swal2
---------------------------------------------------------------*/
-
-.swal2-validation-message,
-.swal2-title,
-.swal2-content,
-.swal2-input {
+.swal2-title {
   text-align: center;
   color: white !important;
   background-color: transparent !important;
 }
-.swal2-file {
-  color: white !important;
-  background-color: transparent !important;
-}
-.swal2-html-container {
-  color: rgb(165, 165, 165) !important;
-  background-color: transparent !important;
-}
-.swal2-select {
-  background-color: black !important;
-  color: white !important;
-  border-radius: 6px !important;
-}
-

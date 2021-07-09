@@ -345,4 +345,11 @@ body {
   background-color: transparent !important;
 }
 
+.swal2-title,
+.swal2-html-container,
+.swal2-text {
+  text-align: center;
+  color: white !important;
+  background-color: transparent !important;
+}
 

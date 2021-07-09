@@ -153,5 +153,10 @@ a{
   text-decoration:none;
   color:#2c7715;
 }
-    
-    
+  
+
+.swal2-title {
+  text-align: center;
+  color: white !important;
+  background-color: transparent !important;
+}

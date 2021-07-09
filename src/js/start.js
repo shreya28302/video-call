@@ -71,11 +71,11 @@ signupBtn.addEventListener("click", async(e) => {
     const snapshot = await firestore.collection('users').where('username', '==', username).get();
     if (snapshot.empty) {
         auth.createUserWithEmailAndPassword(email, password)
-        .then( async (userCredential) => {
+        .then( (userCredential) => {
             // store username email to the database
             const user = userCredential.user;
             const currentUser = firestore.collection('users').doc(`${user.uid}`);
-            const snapshot = await currentUser.get();
+            const snapshot = currentUser.get();
             if (!snapshot.exists) {
                 try {
                     currentUser.set({ email, username, password });
@@ -87,7 +87,9 @@ signupBtn.addEventListener("click", async(e) => {
             document.getElementById('signup_email').value = "";
             document.getElementById('signup_username').value = "";
             document.getElementById('signup_password').value = "";
-            alert('Success! Login Yourself');
+
+            setTimeout(() => { window.location.href = '/main'}, 2000);  
+            
         })
         .catch((error) => {
             document.getElementById('signup_email').value = "";
@@ -101,3 +103,5 @@ signupBtn.addEventListener("click", async(e) => {
     }    
        
 });
+
+
