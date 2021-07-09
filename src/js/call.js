@@ -849,7 +849,7 @@ function setVideoBtn() { videoBtn.addEventListener("click", (e) => { setVideo(e,
 
 function setChatRoomBtn() {
 
-  dragElement(msgerDraggable, msgerDraggable);
+  dragElement(msgerDraggable, msgerChat);
 
   // open chat room
   chatRoomBtn.addEventListener("click", (e) => {
@@ -1418,7 +1418,7 @@ function sendMessage(name, toName, msg, individualMsg, peer_id) {
   }
 }
 
-function onlytofirebase(name, toName, msg, individualMsg) {
+function toFirebase(name, toName, msg, individualMsg) {
   let date = new Date().toString().slice(0,-34).substring(0,15);
   let time = new Date().toString().slice(0,-34).substring(16,21);
   let timestamp = Date.now();
