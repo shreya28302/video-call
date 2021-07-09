@@ -563,7 +563,6 @@ function loadMyMedia(stream) {
   const myHandStatusIcon = document.createElement("button");
   const myVideoStatusIcon = document.createElement("button");
   const myAudioStatusIcon = document.createElement("button");
-  const myVideoFullScreenBtn = document.createElement("button");
   const myVideoImg = document.createElement("img");
 
   // header
@@ -593,10 +592,6 @@ function loadMyMedia(stream) {
   myAudioStatusIcon.setAttribute("id", "myAudioStatusIcon");
   myAudioStatusIcon.className = "fas fa-microphone";
   tippy(myAudioStatusIcon, { content: "On", });
-  // my video full screen mode
-  myVideoFullScreenBtn.setAttribute("id", "myVideoFullScreenBtn");
-  myVideoFullScreenBtn.className = "fas fa-expand";
-  tippy(myVideoFullScreenBtn, { content: "full screen", });
   // my video image
   myVideoImg.setAttribute("id", "myVideoImg");
   myVideoImg.className = "videoImg";
@@ -609,8 +604,6 @@ function loadMyMedia(stream) {
   myHeader.appendChild(myVideoStatusIcon);
   myHeader.appendChild(myAudioStatusIcon);
   myHeader.appendChild(myHandStatusIcon);
-  myHeader.appendChild(myVideoFullScreenBtn);
-
   // add elements to video wrap div
   videoWrap.appendChild(myHeader);
   videoWrap.appendChild(myVideoImg);
@@ -651,7 +644,7 @@ function loadMyMedia(stream) {
   setMuteEveryoneBtn();
   setHideEveryoneBtn();
   calculateCallTime();
-  fullScreenVideoPlayer("myVideo", "myVideoFullScreenBtn"); // full screen mode
+  fullScreenVideoPlayer("myVideo"); // full screen mode
 }
 
 // Load Others Media Stream object
@@ -669,7 +662,6 @@ function loadOthersMediaStream(event, peers, peer_id) {
   const othersVideoStatusIcon = document.createElement("button");
   const othersAudioStatusIcon = document.createElement("button");
   const othersPeerKickOut = document.createElement("button");
-  const othersVideoFullScreenBtn = document.createElement("button");
   const othersVideoImg = document.createElement("img");
 
   // Header
@@ -700,10 +692,6 @@ function loadOthersMediaStream(event, peers, peer_id) {
   othersPeerKickOut.setAttribute("id", peer_id + "_kickOut");
   othersPeerKickOut.className = "fas fa-minus-square";
   tippy(othersPeerKickOut, { content: "remove", });
-  // otehrs video full screen mode
-  othersVideoFullScreenBtn.setAttribute("id", peer_id + "_fullScreen");
-  othersVideoFullScreenBtn.className = "fas fa-expand";
-  tippy(othersVideoFullScreenBtn, { content: "Full screen mode", });
   // my video image
   othersVideoImg.setAttribute("id", peer_id + "_image");
   othersVideoImg.className = "videoImg";
@@ -715,7 +703,6 @@ function loadOthersMediaStream(event, peers, peer_id) {
   othersHeader.appendChild(othersVideoStatusIcon);
   othersHeader.appendChild(othersAudioStatusIcon);
   othersHeader.appendChild(othersHandStatusIcon);
-  othersHeader.appendChild(othersVideoFullScreenBtn);
   
   // add elements to videoWrap div
   videoWrap.appendChild(othersHeader);
@@ -734,7 +721,7 @@ function loadOthersMediaStream(event, peers, peer_id) {
 
   attachMediaStream(othersMedia, othersMediaStream);
   setVideos(); 
-  fullScreenVideoPlayer(peer_id + "_video", peer_id + "_fullScreen"); // full screen mode
+  fullScreenVideoPlayer(peer_id + "_video"); // full screen mode
   setPeerKickOutBtn(peer_id); // kick out some peer
   setVideoImgName(peer_id + "_image", peers[peer_id]["peer_name"]); 
   setPeerHandStatus( peer_id, peers[peer_id]["peer_name"], peers[peer_id]["peer_hand"] ); // refresh remote peers hand icon status and title
@@ -765,10 +752,9 @@ function setPeerChatImgName(image, peerName) {
 }
 
 // go on full screen mode 
-function fullScreenVideoPlayer(videoId, videoFullScreenBtnId) {
+function fullScreenVideoPlayer(videoId) {
 
   let videoPlayer = getId(videoId);
-  let videoFullScreenBtn = getId(videoFullScreenBtnId);
 
   videoPlayer.addEventListener("fullscreenchange", (e) => {
     if (videoPlayer.controls) return; // if controls enabled do nothing
@@ -788,7 +774,6 @@ function fullScreenVideoPlayer(videoId, videoFullScreenBtnId) {
     }
   });
 
-  videoFullScreenBtn.addEventListener("click", (e) => { fullScreenVideo(); }); // on button click go on full screen
   videoPlayer.addEventListener("dblclick", (e) => { fullScreenVideo(); }); // on video double click go on full screen
 
   function fullScreenVideo() {
