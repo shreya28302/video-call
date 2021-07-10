@@ -34,24 +34,6 @@ This is a webRTC based video calling website where the users can register and ge
 * clone this repo
 git clone https://github.com/shreya28302/video-call.git
 cd server
-* create a .env file in the server folder and add the below lines to the file
-* if you want to use ngrok and turn create the accounts and fill yours
-* Then enable NGROK_ENABLED = true and TURN_ENABLED = true
-# Ngrok
-# 1. Goto https://ngrok.com
-# 2. Get started for free 
-
-NGROK_ENABLED=true|false
-NGROK_AUTH_TOKEN=YourNgrokAuthToken
-
-# Turn
-# 1. Goto http://numb.viagenie.ca/
-# 2. Create an account
-
-TURN_ENABLED=true|false
-TURN_URLS=turn:numb.viagenie.ca
-TURN_USERNAME=YourNumbUsername
-TURN_PASSWORD=YourNumbPassword
 * Install dependencies
 npm install
 * Start the server
@@ -62,5 +44,6 @@ npm start
 * Node.js 
 * Web RTC 
 * Socket.io 
+* ngrok and stun-turn server
 * Firebase - for database 
 * Heroku - for hosting
