@@ -28,6 +28,10 @@ This is a webRTC based video calling website where the users can register and ge
 * Share the room link for others to join 
 
 # ScreenShots
+![anc](https://github.com/shreya28302/video-call/blob/master/screenshots/Screenshot%202021-07-10%20230504.png)
+![sfc](https://github.com/shreya28302/video-call/blob/master/screenshots/Screenshot%202021-07-10%20231231.png)
+![cxz](https://github.com/shreya28302/video-call/blob/master/screenshots/Screenshot%202021-07-10%20235301.png)
+
 
 # Getting Started
 * You need to have Node.js installed
