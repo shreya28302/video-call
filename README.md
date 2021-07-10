@@ -22,18 +22,28 @@ This is a webRTC based video calling website where the users can register and ge
 # Demo
 * Open https://evening-basin-41332.herokuapp.com/
 * Create an account
-* Set a meeting name to create your name
+* Set a meeting name to create your room
 * Click on call button and give access to camera and microphone to join call
 * Click on chat button to chat before the meeting starts and as well as after the meeting ends
 * Share the room link for others to join 
 
 # ScreenShots
 
-# Start
+# Getting Started
+* You need to have Node.js installed
+* clone this repo
+  * git clone https://github.com/shreya28302/video-call.git
+  * cd video-call
+* Install dependencies
+  * npm install
+* Start the server
+  * npm start
+* open http://localhost:4000 in your browser
 
 # Tech Stack
 * Node.js 
 * Web RTC 
 * Socket.io 
+* ngrok and stun-turn server
 * Firebase - for database 
 * Heroku - for hosting
