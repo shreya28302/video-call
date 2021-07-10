@@ -33,7 +33,7 @@ This is a webRTC based video calling website where the users can register and ge
 * You need to have Node.js installed
 * clone this repo
   * git clone https://github.com/shreya28302/video-call.git
-  * cd server
+  * cd video-call
 * Install dependencies
   * npm install
 * Start the server
