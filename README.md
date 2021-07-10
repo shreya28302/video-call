@@ -22,7 +22,7 @@ This is a webRTC based video calling website where the users can register and ge
 # Demo
 * Open https://evening-basin-41332.herokuapp.com/
 * Create an account
-* Set a meeting name to create your name
+* Set a meeting name to create your room
 * Click on call button and give access to camera and microphone to join call
 * Click on chat button to chat before the meeting starts and as well as after the meeting ends
 * Share the room link for others to join 
