@@ -33,7 +33,7 @@ This is a webRTC based video calling website where the users can register and ge
 * User(Your) Page
 ![userpage](https://github.com/shreya28302/video-call/blob/master/screenshots/userpage.png)
 * Call Room
-![callpage]()
+![callpage](https://github.com/shreya28302/video-call/blob/master/screenshots/callpage.png)
 * Chat Room
 ![chatpage](https://github.com/shreya28302/video-call/blob/master/screenshots/chatpage.png)
 
