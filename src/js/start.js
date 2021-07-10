@@ -40,6 +40,9 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 
+auth.onAuthStateChanged(async (user) => { if (user) window.location.href='/main'; });
+
+
 let loginBtn = document.getElementById("loginBtn");
 let signupBtn = document.getElementById("signupBtn");
 
@@ -70,6 +73,7 @@ signupBtn.addEventListener("click", async(e) => {
 
     const snapshot = await firestore.collection('users').where('username', '==', username).get();
     if (snapshot.empty) {
+    
         auth.createUserWithEmailAndPassword(email, password)
         .then( (userCredential) => {
             // store username email to the database
@@ -88,7 +92,7 @@ signupBtn.addEventListener("click", async(e) => {
             document.getElementById('signup_username').value = "";
             document.getElementById('signup_password').value = "";
 
-            setTimeout(() => { window.location.href = '/main'}, 2000);  
+            setTimeout(() => { window.location.href = '/main'}, 1000);  
             
         })
         .catch((error) => {
@@ -99,6 +103,9 @@ signupBtn.addEventListener("click", async(e) => {
         });
     }
     else {
+        document.getElementById('signup_email').value = "";
+        document.getElementById('signup_username').value = "";
+        document.getElementById('signup_password').value = "";
         alert('Username already in use');
     }    
        

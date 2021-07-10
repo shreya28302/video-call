@@ -147,7 +147,14 @@ function loadMeetings() {
                       <p class="text-muted">${doc.data().date}</p>
                   </div>
               </div>
-              <div class="clearfix"></div>
+              <div class="clearfix">
+                <button onclick="copyRoomURL('${callLink}')" class="btn btn-info">
+                    copy call link
+                </button>
+                <button onclick="copyRoomURL('${chatLink}')" class="btn btn-info">
+                    copy chat link
+                </button>
+              </div>
               <hr>
           </div>
         </div>
@@ -159,3 +166,13 @@ function loadMeetings() {
 }
 
 
+// copy room url to clipboard
+function copyRoomURL(url) {
+  let tmpInput = document.createElement("input");
+  document.body.appendChild(tmpInput);
+  tmpInput.value = url;
+  tmpInput.select();
+  document.execCommand("copy");
+  document.body.removeChild(tmpInput);
+  notify("Meeting link copied");
+}

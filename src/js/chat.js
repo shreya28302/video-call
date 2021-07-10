@@ -648,9 +648,7 @@ function toFirebase(name, toName, msg, individualMsg) {
 
 // Leave the Room and create a new one
 function leaveRoom() {
-  let callLink = server + '/join/' + roomId;
   Swal.fire({ background: background, position: "top", title: "Leave this room?",
-    html: `<p>If you want to join call, go the main page <br />and click on call of this room</p>`,
     showDenyButton: true, confirmButtonText: `Yes`, confirmButtonColor: 'black', denyButtonText: `No`, denyButtonColor: 'grey',
   }).then((result) => { if (result.isConfirmed) window.location.href = "/main"; });
 }
