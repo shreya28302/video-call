@@ -28,9 +28,14 @@ This is a webRTC based video calling website where the users can register and ge
 * Share the room link for others to join 
 
 # ScreenShots
-![anc](https://github.com/shreya28302/video-call/blob/master/screenshots/Screenshot%202021-07-10%20230504.png)
-![sfc](https://github.com/shreya28302/video-call/blob/master/screenshots/Screenshot%202021-07-10%20231231.png)
-![cxz](https://github.com/shreya28302/video-call/blob/master/screenshots/Screenshot%202021-07-10%20235301.png)
+* Login/Register page
+![startpage](https://github.com/shreya28302/video-call/blob/master/screenshots/startpage.png)
+* User(Your) Page
+![userpage](https://github.com/shreya28302/video-call/blob/master/screenshots/userpage.png)
+* Call Room
+![callpage]()
+* Chat Room
+![chatpage](https://github.com/shreya28302/video-call/blob/master/screenshots/chatpage.png)
 
 
 # Getting Started
