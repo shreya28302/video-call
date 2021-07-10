@@ -40,9 +40,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const firestore = firebase.firestore();
 
-auth.onAuthStateChanged(async (user) => { if (user) window.location.href='/main'; });
-
-
 let loginBtn = document.getElementById("loginBtn");
 let signupBtn = document.getElementById("signupBtn");
 
@@ -88,12 +85,12 @@ signupBtn.addEventListener("click", async(e) => {
                     console.log(error);
                 }
             }
+            
+            setTimeout(() => { window.location.href = '/main'}, 2000);  
             document.getElementById('signup_email').value = "";
             document.getElementById('signup_username').value = "";
             document.getElementById('signup_password').value = "";
 
-            setTimeout(() => { window.location.href = '/main'}, 1000);  
-            
         })
         .catch((error) => {
             document.getElementById('signup_email').value = "";
