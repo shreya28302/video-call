@@ -5,9 +5,9 @@ This is a webRTC based video calling website where the users can register and ge
 <h1>https://evening-basin-41332.herokuapp.com/</h1> <br />
 
 # Features and Functionalities
-* Multi-participants 
 * Unlimited number of rooms 
 * Unlimited duration calls 
+* Multiple participants 
 * Copy the link and share it with your friends 
 * Toggling your audio/video stream 
 * Mute and Hide Everyone 
@@ -17,7 +17,6 @@ This is a webRTC based video calling website where the users can register and ge
 * Screen Sharing 
 * Recording your stream, audio and video 
 * Full Screen Mode on double click on the video  
-* Desktop compatible
 
 # Demo
 * Open https://evening-basin-41332.herokuapp.com/
