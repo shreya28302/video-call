@@ -2,7 +2,7 @@
 This is a webRTC based video chatting web application developed for Microsoft Engage 2021 program. The users can register and get logged in to their user page. They can either create a new room or use their previous rooms to join a call and chat. This implementation also consists of a real time chat and file share functionality. 
 
 [Project deployed link](https://evening-basin-41332.herokuapp.com/)<br />
-[How I used Agile Methodology](https://drive.google.com/file/d/1XxWglKo0iPGE_Q61q1QibgOnW-O4YEba/view)<br />
+[How I used Agile Methodology](https://drive.google.com/file/d/1djcvGkr8s074YWBTcPuLnWh4cj8O21KV/view)<br />
 
 # Features and Functionalities
 * Unlimited number of rooms 
@@ -25,6 +25,7 @@ This is a webRTC based video chatting web application developed for Microsoft En
 * Click on call button and give access to camera and microphone to join call
 * Click on chat button to chat before the meeting starts and as well as after the meeting ends
 * Share the room link for others to join 
+* [Demo Video](https://drive.google.com/file/d/1XxWglKo0iPGE_Q61q1QibgOnW-O4YEba/view)
 
 # ScreenShots
 * Login/Register page<br/>
