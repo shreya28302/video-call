@@ -2,7 +2,7 @@
 
 This is a webRTC based video calling website where the users can register and get logged in to their user page. They can either create a new room or use their previous rooms to join a call and chat. The users have the capabiltiy to mute and hide. This implementation also consists of a real time chat and file share functionality. 
 
-<h1>https://ms--teams.herokuapp.com/</h1> <br />
+<h1>https://evening-basin-41332.herokuapp.com/</h1> <br />
 
 # Features and Functionalities
 * Unlimited number of rooms 
@@ -19,7 +19,7 @@ This is a webRTC based video calling website where the users can register and ge
 * Full Screen Mode on double click on the video  
 
 # Demo
-* Open https://ms--teams.herokuapp.com/
+* Open https://evening-basin-41332.herokuapp.com/
 * Create an account
 * Set a meeting name to create your room
 * Click on call button and give access to camera and microphone to join call
