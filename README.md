@@ -1,6 +1,7 @@
 # Microsoft Engage 2021 challenge - Build a Microsoft Teams Clone
 <h3> Teams </h3> 
-This is a webRTC based video chatting web application developed for Microsoft Engage 2021 program. The users can register and get logged in to their user page. They can either create a new room or use their previous rooms to join a call and chat. This implementation also consists of a real time chat and file share functionality. <br />
+This is a webRTC based video chatting web application developed for Microsoft Engage 2021 program. The users can register and get logged in to their user page. They can either create a new room or use their previous rooms to join a call and chat. This implementation also consists of a real time chat and file share functionality.
+
 
 [Project deployed link](https://evening-basin-41332.herokuapp.com/)<br />
 [How I used Agile Methodology](https://drive.google.com/file/d/1djcvGkr8s074YWBTcPuLnWh4cj8O21KV/view)<br />
